@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Omr{% endblock %}</title>
+    {% load staticfiles %}
+    <link rel="shortcut icon" type="image/png" href="{%  static 'favicon.ico' %}"/>
+
+    <link rel="stylesheet" type="text/css" href="{% static 'music/bootstrap.min.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'music/satisfy.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'music/style.css' %}"/>
+
+
+<!--
+    <script src="{% static 'music/js/Midi.js' %}"></script>
+    <script src="{% static 'music/js/Tone.js' %}"></script>
+    <script src="{% static 'music/js/tonejs-ui.js' %}"></script>
+-->
+
+    <script src="{% static 'music/js/jquery.min.js' %}"></script>
+    <script src="{% static 'music/js/bootstrap.min.js' %}"></script>
+
+
+
+
+    <script src="http://www.midijs.net/lib/midi.js"></script>
+
+    <script src="{% static 'music/js/main.js' %}"></script>
+
+</head>
+
+<body>
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+
+        <!-- Header -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#topNavBar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="{% url 'music:index' %}">Omr</a>
+        </div>
+
+        <!-- Items -->
+        <div class="collapse navbar-collapse" id="topNavBar">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="{% url 'music:album-add' %}">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>&nbsp; Add Music Cheat
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+</nav>
+{% block body %}
+{% endblock %}
+</body>
+</html>

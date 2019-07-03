@@ -1,0 +1,208 @@
+{% extends 'music/base.html' %}
+
+{%block title %} Home{% endblock %}
+
+
+{% block body %}
+<div class="albums-container container-fluid">
+
+    <audio id="myAudio">
+        <source src="/media/yes.mid" type="audio/wav">
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- Albums -->
+    <div class="row ">
+        <div class="col-sm-12">
+            <!--<h3>{{ user.username }}'s Albums</h3>-->
+        </div>
+        {% for album in all_albums %}
+        <div class="col-sm-4 col-lg-3 ">
+            <div class="thumbnail">
+
+                <h4 style="font-weight:bold">{{ album.album_title }}</h4>
+
+                <div class="container2">
+                    <img class="myImg" onClick="reply_click(this.id)" alt="{{ album.album_title }}" id="{{ album.id }}" src="{{ album.album_logo.url }}" style="width:100%; border: 1px solid; margin-top: 5px;
+                      margin-bottom: 5px;">
+                    <div class="overlay">
+                         <div class="text">
+                             <div class="nav">
+                                <button id="pause" onclick="togglePlayM()" value="{{ album.album_title }}" class="btn btn-success">Play</button>
+                                </div>
+                         </div>
+                    </div>
+                </div>
+
+                <div id="myModal" class="modal">
+                    <span class="close">&times;</span>
+                    <div>
+                        <img class="modal-content" id="img01">
+                        <div class="modal-content modal-content-editMe">
+                            <div class="progress" id="progress">
+
+                            </div>
+                            <button class="togglePlay" onClick="togglePlay()">Play/Pause</button>
+                        </div>
+                    <a href="#" title="Play video" class="play"></a>
+                    </div>
+                     <div id="caption">
+                         <label class="control-label col-sm-2">{{ album.album_title }}</label>
+                     </div>
+                </div>
+
+                <div class="caption">
+                    <!-- Delete Album -->
+                    <div style="text-align: right;">
+                        <form action="{% url 'music:album-delete' album.id %}" method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="album_id" value="{{ album.id }}"/>
+                            <button type="submit" class="btn btn-default btn-sm">
+                                <span class="glyphicon glyphicon-trash"></span>
+                            </button>
+                         </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+
+<script>
+    var isPlaying = false
+    function togglePlayM (e) {
+
+        e = e || window.event;
+        var btn = e.target;
+
+        if (!isPlaying) {
+              btn.classList.remove('active');
+              btn.innerText = "Pause";
+
+              MIDIjs.play('/media/' + btn.value + '.mid');
+              isPlaying = true;
+        }else {
+            btn.classList.add('active');
+            btn.innerText = "Play";
+            MIDIjs.stop()
+            isPlaying = false;
+        }
+}
+</script>
+
+<script>
+// Get the modal
+var modal = document.getElementById("myModal");
+
+var x = document.getElementById("myAudio");
+var isPlaying = false;
+
+function playPause() {
+  var change = document.getElementById("myAudio");
+  x.currentTime = 0
+  if (isPlaying) {
+    x.pause();
+    change.innerHTML = "PLAY";
+  } else {
+    x.play();
+    change.innerHTML = "PAUSE";
+  }
+  isPlaying = !isPlaying;
+}
+
+
+// Get the image and insert it inside the modal - use its "alt" text as a caption
+var img = document.getElementById('');
+var modalImg = document.getElementById("img01");
+var captionText = document.getElementById("caption");
+
+
+
+function reply_click(clicked_id)
+  {
+      modal.style.display = "block";
+
+      modalImg.src = document.getElementById(clicked_id).src;
+      captionText.innerHTML = document.getElementById(clicked_id).alt;
+      <!--playPause()-->
+  }
+
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+  modal.style.display = "none";
+  x.pause();
+  isPlaying = !isPlaying;
+}
+
+
+function playAudio(){
+    x.play();
+    isPlaying = true;
+}
+
+function pauseAudio(){
+   x.pause();
+  isPlaying = !isPlaying;
+}
+
+</script>
+
+<script>
+    var timer;
+var percent = 0;
+var audio = document.getElementById("myAudio");
+audio.addEventListener("playing", function(_event) {
+  var duration = _event.target.duration;
+  advance(duration, audio);
+});
+audio.addEventListener("pause", function(_event) {
+  clearTimeout(timer);
+});
+var advance = function(duration, element) {
+  var progress = document.getElementById("progress");
+  increment = 10/duration
+  percent = Math.min(increment * element.currentTime * 10, 100);
+  progress.style.width = percent+'%'
+  startTimer(duration, element);
+}
+var startTimer = function(duration, element){
+  if(percent < 100) {
+    timer = setTimeout(function (){advance(duration, element)}, 100);
+  }
+}
+
+function togglePlay (e) {
+  e = e || window.event;
+  var btn = e.target;
+  if (!audio.paused) {
+    btn.classList.remove('active');
+    audio.pause();
+    isPlaying = false;
+  } else {
+    btn.classList.add('active');
+    audio.play();
+    isPlaying = true;
+  }
+}
+
+
+$(document).ready(function() {
+  var icon = $('.play');
+  icon.click(function() {
+    icon.toggleClass('active');
+    return false;
+  });
+});
+</script>
+
+
+{% endblock %}
+
